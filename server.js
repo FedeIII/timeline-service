@@ -1,31 +1,37 @@
-// import dns from 'node:dns';
 import express from 'express';
-import * as projectsService from './src/services/projects.js';
+import { ApolloServer } from '@apollo/server';
+import { ApolloServerPluginDrainHttpServer } from '@apollo/server/plugin/drainHttpServer';
+import { expressMiddleware } from '@apollo/server/express4';
+import http from 'http';
+import cors from 'cors';
+import bodyParser from 'body-parser';
 
-// dns.setDefaultResultOrder('ipv4first');
+import typeDefs from './src/type-defs/index.js';
+import resolvers from './src/resolvers/index.js';
 
 // Constants
 const PORT = 8080;
 const HOST = 'localhost';
 
-// App
 const app = express();
-app.get('/', (req, res) => {
-  res.send('I\'m alive!!!');
+const httpServer = http.createServer(app);
+
+const server = new ApolloServer({
+  typeDefs,
+  resolvers,
+  plugins: [ApolloServerPluginDrainHttpServer({ httpServer })],
 });
 
-app.get('/projects', (req, res) => {
-  const projects = projectsService.get();
+await server.start();
 
-  res.send(projects);
-});
+app.use('/graphql', cors(), bodyParser.json(),
+  expressMiddleware(server, {
+    context: async ({ req }) => ({ token: req.headers.token }),
+  }),
+);
 
-app.get('/projects/:id', (req, res) => {
-  const project = projectsService.get(req.params.id);
+await new Promise((resolve) => httpServer.listen({ port: PORT }, resolve));
 
-  res.send(project);
-});
-
-app.listen(PORT, HOST, () => {
-  console.log(`Running on http://${HOST}:${PORT}`);
+app.get('/health', (req, res) => {
+  res.status(200).send('Healthy!');
 });

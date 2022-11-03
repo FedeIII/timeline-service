@@ -3,14 +3,6 @@ import path from 'path';
 
 const projectsDirectory = path.join(process.cwd(), 'db/projects');
 
-export function get(id) {
-  if (id) {
-    return getProject(id);
-  }
-
-  return getAllProjects();
-}
-
 function getAllProjects() {
   const fileNames = fs.readdirSync(projectsDirectory);
   const projects = fileNames.map((fileName) => {
@@ -26,6 +18,12 @@ function getAllProjects() {
     };
   });
 
+  return projects;
+}
+
+function getSortedProjects() {
+  const projects = getAllProjects();
+
   const sortedProjects = projects.sort(({ date: a }, { date: b }) => {
     if (a < b) {
       return 1;
@@ -39,14 +37,20 @@ function getAllProjects() {
   return sortedProjects
 }
 
-function getProject(id) {
-  const fullPath = path.join(projectsDirectory, `${id}.json`);
-  const rawdata = fs.readFileSync(fullPath, 'utf8');
-  const project = JSON.parse(rawdata);
+function getProject(_, projectParams) {
+  const projects = getAllProjects();
 
-  return {
-    id,
-    ...project,
-  };
+  const project = projects.find(
+    proj => Object.entries(projectParams).reduce(
+      (isMatch, [key, value]) => isMatch && proj[key] == value,
+      true,
+    )
+  )
+
+  return project;
 }
 
+export default {
+  projects: getSortedProjects,
+  project: getProject,
+}
