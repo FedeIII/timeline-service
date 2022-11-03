@@ -1,0 +1,15 @@
+{
+  "name": "timeline-service",
+  "version": "0.0.0",
+  "private": true,
+  "description": "Timeline Service",
+  "author": "Federico Perez <fedelll@gmail.com>",
+  "main": "src/server.js",
+  "type": "module",
+  "scripts": {
+    "start": "node server.js"
+  },
+  "dependencies": {
+    "express": "^4.16.1"
+  }
+}
