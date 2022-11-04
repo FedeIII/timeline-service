@@ -6,11 +6,21 @@ export default `#graphql
   }
 
   type Query {
-    projects: [Project]
-    project(
+    getAllProjects: [Project]
+    getProject(
       id: String
       title: String
       date: String
     ): Project
+  }
+
+  input ProjectInput {
+    id: String
+    title: String
+    date: String
+  }
+
+  type Mutation {
+    createProject(input: ProjectInput): Project
   }
 `;

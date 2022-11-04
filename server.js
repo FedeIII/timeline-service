@@ -8,10 +8,7 @@ import bodyParser from 'body-parser';
 
 import typeDefs from './src/type-defs/index.js';
 import resolvers from './src/resolvers/index.js';
-
-// Constants
-const PORT = 8080;
-const HOST = 'localhost';
+import { PORT } from './src/app-config.js';
 
 const app = express();
 const httpServer = http.createServer(app);
@@ -33,5 +30,5 @@ app.use('/graphql', cors(), bodyParser.json(),
 await new Promise((resolve) => httpServer.listen({ port: PORT }, resolve));
 
 app.get('/health', (req, res) => {
-  res.status(200).send('Healthy!');
+  res.status(200).send('Healthy');
 });
