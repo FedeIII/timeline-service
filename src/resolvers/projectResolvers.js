@@ -9,8 +9,8 @@ function getUnsortedProjects() {
   });
 }
 
-function getSortedProjects() {
-  const projects = getUnsortedProjects();
+async function getSortedProjects() {
+  const projects = await getUnsortedProjects();
 
   const sortedProjects = projects.sort(({ date: a }, { date: b }) => {
     if (a < b) {
