@@ -39,6 +39,9 @@ function createProject(_, { input }) {
     id: input.id,
     title: input.title,
     date: input.date,
+    description: input.description,
+    tags: input.tags,
+    events: input.events,
   });
 
   return new Promise((resolve, reject) => {
@@ -49,6 +52,26 @@ function createProject(_, { input }) {
   });
 }
 
+async function addEvent(_, { projectId, event }) {
+  const project = await getProject(_, { id: projectId });
+
+  return new Promise((resolve, reject) => {
+    const newEvents = [...project.events, event];
+    Project.updateOne(
+      { id: projectId },
+      { events: newEvents },
+    ).exec((err, _) => {
+      if (err) reject(err);
+      else resolve(project);
+    });
+  });
+}
+
+async function deleteProject(_, { id }) {
+  const { deletedCount } = await Project.deleteOne({ id })
+  return deletedCount;
+}
+
 export default {
   Query: {
     getAllProjects: getSortedProjects,
@@ -57,5 +80,7 @@ export default {
 
   Mutation: {
     createProject,
+    addEvent,
+    deleteProject,
   }
 }

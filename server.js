@@ -6,7 +6,7 @@ import http from 'http';
 import cors from 'cors';
 import bodyParser from 'body-parser';
 
-import typeDefs from './src/type-defs/index.js';
+import typeDefs from './src/type-defs/projects.js';
 import resolvers from './src/resolvers/index.js';
 import { PORT } from './src/app-config.js';
 

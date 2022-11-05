@@ -1,13 +1,22 @@
 import mongoose from 'mongoose';
 
 export const projectSchema = new mongoose.Schema({
-    id: {
-        type: String
-    },
-    title: {
-        type: String
-    },
-    date: {
-        type: String
-    },
+    id: String,
+    title: String,
+    date: String,
+    description: String,
+    tags: [{
+        type: { type: String },
+        label: String,
+    }],
+    events: [{
+        imgUrl: String,
+        title: String,
+        description: String,
+        date: String,
+        type: {
+            type: String,
+            enum: ['START_PROJECT', 'START', 'MIDDLE', 'END', 'END_PROJECT'],
+        },
+    }],
 });
