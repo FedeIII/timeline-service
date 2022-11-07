@@ -1,4 +1,7 @@
+import mongoose from 'mongoose';
 import { Project } from '../db-connector.js'
+
+// QUERIES
 
 function getUnsortedProjects() {
   return new Promise((resolve, reject) => {
@@ -33,6 +36,8 @@ function getProject(_, projectParams) {
     });
   });
 }
+
+// MUTATIONS
 
 function createProject(_, { input }) {
   const project = new Project({
@@ -72,6 +77,22 @@ async function deleteProject(_, { id }) {
   return deletedCount;
 }
 
+async function editEventTitle(_, { projectId, eventId, title }) {
+  return new Promise((resolve, reject) => {
+    Project.updateOne({
+      id: projectId,
+      'events.id': eventId
+    }, {
+      '$set': {
+        'events.$.title': title,
+      }
+    }).exec((err, _) => {
+      if (err) reject(err);
+      else resolve(title);
+    });
+  });
+}
+
 export default {
   Query: {
     getAllProjects: getSortedProjects,
@@ -82,5 +103,6 @@ export default {
     createProject,
     addEvent,
     deleteProject,
+    editEventTitle
   }
 }

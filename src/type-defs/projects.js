@@ -15,6 +15,7 @@ export default `#graphql
 
   enum EventType {
     START_PROJECT
+    PROMPT
     START
     MIDDLE
     END
@@ -22,6 +23,7 @@ export default `#graphql
   }
 
   type Event {
+    id: String
     imgUrl: String
     title: String
     description: String
@@ -57,6 +59,7 @@ export default `#graphql
   }
 
   input EventInput {
+    id: String
     imgUrl: String
     title: String
     description: String
@@ -68,5 +71,10 @@ export default `#graphql
     createProject(input: ProjectInput): Project
     addEvent(projectId: String, event: EventInput): Project
     deleteProject(id: String): Int
+    editEventTitle(
+      projectId: String,
+      eventId: String,
+      title: String
+    ): Project
   }
 `;
