@@ -29,6 +29,7 @@ export default `#graphql
     description: String
     date: String
     type: EventType
+    topic: String
   }
 
   # QUERIES
@@ -65,6 +66,7 @@ export default `#graphql
     description: String
     date: String
     type: EventType
+    topic: String
   }
 
   type Mutation {

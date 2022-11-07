@@ -26,5 +26,6 @@ export const projectSchema = new mongoose.Schema({
         'END_PROJECT',
       ],
     },
+    topic: String,
   }],
 });
