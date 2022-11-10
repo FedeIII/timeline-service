@@ -79,16 +79,16 @@ async function deleteProject(_, { id }) {
 
 async function editEventTitle(_, { projectId, eventId, title }) {
   return new Promise((resolve, reject) => {
-    Project.updateOne({
+    Project.findOneAndUpdate({
       id: projectId,
       'events.id': eventId
     }, {
       '$set': {
         'events.$.title': title,
       }
-    }).exec((err, _) => {
+    }).exec((err, project) => {
       if (err) reject(err);
-      else resolve(title);
+      else resolve(project);
     });
   });
 }
