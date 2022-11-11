@@ -77,16 +77,21 @@ async function deleteProject(_, { id }) {
   return deletedCount;
 }
 
-async function editEventTitle(_, { projectId, eventId, title }) {
+async function editEvent(_, { projectId, eventId, eventProps }) {
+  const updateProps = Object.entries(eventProps).reduce((acc, [propName, propValue]) => ({
+    '$set': {
+      ...acc['$set'],
+      [`events.$.${propName}`]: propValue,
+    },
+  }), { '$set': {} });
+
   return new Promise((resolve, reject) => {
     Project.findOneAndUpdate({
       id: projectId,
       'events.id': eventId
-    }, {
-      '$set': {
-        'events.$.title': title,
-      }
-    }).exec((err, project) => {
+    },
+      updateProps
+    ).exec((err, project) => {
       if (err) reject(err);
       else resolve(project);
     });
@@ -101,8 +106,9 @@ export default {
 
   Mutation: {
     createProject,
-    addEvent,
     deleteProject,
-    editEventTitle
+    // events
+    addEvent,
+    editEvent,
   }
 }

@@ -73,10 +73,10 @@ export default `#graphql
     createProject(input: ProjectInput): Project
     addEvent(projectId: String, event: EventInput): Project
     deleteProject(id: String): Int
-    editEventTitle(
+    editEvent(
       projectId: String,
       eventId: String,
-      title: String
+      eventProps: EventInput
     ): Project
   }
 `;
