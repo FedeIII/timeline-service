@@ -72,6 +72,7 @@ export default `#graphql
   type Mutation {
     createProject(input: ProjectInput): Project
     addEvent(projectId: String, event: EventInput): Project
+    editProject(id: String!, input: ProjectInput!): Project
     deleteProject(id: String): Int
     editEvent(
       projectId: String,

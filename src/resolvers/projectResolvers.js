@@ -57,6 +57,16 @@ function createProject(_, { input }) {
   });
 }
 
+function editProject(_, { id, input }) {
+  return new Promise((resolve, reject) => {
+    Project.findOneAndUpdate({ id }, input)
+      .exec((err, project) => {
+        if (err) reject(err);
+        else resolve(project);
+      });
+  });
+}
+
 async function addEvent(_, { projectId, event }) {
   const project = await getProject(_, { id: projectId });
 
@@ -106,6 +116,7 @@ export default {
 
   Mutation: {
     createProject,
+    editProject,
     deleteProject,
     // events
     addEvent,
