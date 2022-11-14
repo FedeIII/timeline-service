@@ -39,6 +39,20 @@ function getProject(_, projectParams) {
 
 // MUTATIONS
 
+function sortProjectEvents(projectId) {
+  return Project.findOneAndUpdate(
+    { id: projectId },
+    { $push: { events: { $each: [], $sort: { date: 1 } } } },
+    { new: true }
+  )
+}
+
+function sortEvents(events) {
+  return events.sort(
+    (event1, event2) => event1.date > event2.date ? 1 : -1
+  );
+}
+
 function createProject(_, { input }) {
   const project = new Project({
     id: input.id,
@@ -46,7 +60,7 @@ function createProject(_, { input }) {
     date: input.date,
     description: input.description,
     tags: input.tags,
-    events: input.events,
+    events: sortEvents(input.events),
   });
 
   return new Promise((resolve, reject) => {
@@ -58,8 +72,12 @@ function createProject(_, { input }) {
 }
 
 function editProject(_, { id, input }) {
+  const projectData = {
+    ...input,
+    events: sortEvents(input.events),
+  };
   return new Promise((resolve, reject) => {
-    Project.findOneAndUpdate({ id }, input)
+    Project.findOneAndUpdate({ id }, projectData)
       .exec((err, project) => {
         if (err) reject(err);
         else resolve(project);
@@ -68,14 +86,17 @@ function editProject(_, { id, input }) {
 }
 
 async function addEvent(_, { projectId, event }) {
-  const project = await getProject(_, { id: projectId });
+  await Project.updateOne(
+    { id: projectId },
+    {
+      $push: {
+        events: event,
+      }
+    },
+  )
 
   return new Promise((resolve, reject) => {
-    const newEvents = [...project.events, event];
-    Project.updateOne(
-      { id: projectId },
-      { events: newEvents },
-    ).exec((err, _) => {
+    sortProjectEvents(projectId).exec((err, project) => {
       if (err) reject(err);
       else resolve(project);
     });
@@ -88,24 +109,28 @@ async function deleteProject(_, { id }) {
 }
 
 async function editEvent(_, { projectId, eventId, eventProps }) {
-  const updateProps = Object.entries(eventProps).reduce((acc, [propName, propValue]) => ({
-    '$set': {
-      ...acc['$set'],
+  const updateProps = Object.entries(eventProps).reduce(
+    (acc, [propName, propValue]) => ({
+      ...acc,
       [`events.$.${propName}`]: propValue,
-    },
-  }), { '$set': {} });
+    }),
+    {},
+  );
+
+  await Project.findOneAndUpdate({
+    id: projectId,
+    'events.id': eventId
+  }, {
+    $set: updateProps,
+  });
 
   return new Promise((resolve, reject) => {
-    Project.findOneAndUpdate({
-      id: projectId,
-      'events.id': eventId
-    },
-      updateProps
-    ).exec((err, project) => {
+    sortProjectEvents(projectId).exec((err, project) => {
       if (err) reject(err);
       else resolve(project);
     });
   });
+
 }
 
 export default {
