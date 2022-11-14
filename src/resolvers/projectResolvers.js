@@ -72,10 +72,13 @@ function createProject(_, { input }) {
 }
 
 function editProject(_, { id, input }) {
-  const projectData = {
-    ...input,
-    events: sortEvents(input.events),
-  };
+  let projectData = input;
+  if (input.events) {
+    projectData = {
+      ...projectData,
+      events: sortEvents(projectData.events),
+    };
+  }
   return new Promise((resolve, reject) => {
     Project.findOneAndUpdate({ id }, projectData)
       .exec((err, project) => {
