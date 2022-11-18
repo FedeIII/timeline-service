@@ -1,4 +1,5 @@
-import mongoose from 'mongoose';
+import { v4 as uuid } from 'uuid';
+
 import { Project } from '../db-connector.js'
 
 // QUERIES
@@ -43,7 +44,7 @@ function sortProjectEvents(projectId) {
   return Project.findOneAndUpdate(
     { id: projectId },
     { $push: { events: { $each: [], $sort: { date: 1 } } } },
-    { new: true }
+    { new: true },
   )
 }
 
@@ -89,14 +90,15 @@ function editProject(_, { id, input }) {
 }
 
 async function addEvent(_, { projectId, event }) {
+  const id = event.id || uuid();
   await Project.updateOne(
     { id: projectId },
     {
       $push: {
-        events: event,
+        events: { ...event, id },
       }
     },
-  )
+  );
 
   return new Promise((resolve, reject) => {
     sortProjectEvents(projectId).exec((err, project) => {
@@ -133,6 +135,19 @@ async function editEvent(_, { projectId, eventId, eventProps }) {
       else resolve(project);
     });
   });
+}
+
+async function deleteEvent(_, { projectId, eventId }) {
+  return new Promise((resolve, reject) => {
+    Project.findOneAndUpdate(
+      { id: projectId },
+      { $pull: { events: { id: eventId } } },
+      { new: true },
+    ).exec((err, project) => {
+      if (err) reject(err);
+      else resolve(project);
+    });
+  });
 
 }
 
@@ -149,5 +164,6 @@ export default {
     // events
     addEvent,
     editEvent,
+    deleteEvent,
   }
 }

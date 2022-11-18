@@ -79,5 +79,6 @@ export default `#graphql
       eventId: String,
       eventProps: EventInput
     ): Project
+    deleteEvent(projectId: String!, eventId: String!): Project
   }
 `;
