@@ -2,7 +2,6 @@ export default `#graphql
   type Project {
     id: String
     title: String
-    date: String
     description: String
     tags: [Tag]
     events: [Event]
@@ -39,7 +38,6 @@ export default `#graphql
     getProject(
       id: String
       title: String
-      date: String
     ): Project
   }
 
@@ -48,7 +46,6 @@ export default `#graphql
   input ProjectInput {
     id: String
     title: String
-    date: String
     description: String
     tags: [TagInput]
     events: [EventInput]

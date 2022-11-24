@@ -3,7 +3,6 @@ import mongoose from 'mongoose';
 export const projectSchema = new mongoose.Schema({
   id: String,
   title: String,
-  date: String,
   description: String,
   tags: [{
     type: { type: String },

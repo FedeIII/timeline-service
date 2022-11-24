@@ -16,10 +16,12 @@ function getUnsortedProjects() {
 async function getSortedProjects() {
   const projects = await getUnsortedProjects();
 
-  const sortedProjects = projects.sort(({ date: a }, { date: b }) => {
-    if (a < b) {
+  const sortedProjects = projects.sort(({ events: eventsA }, { events: eventsB }) => {
+    if (!eventsA[0]) return 1;
+    if (!eventsB[0]) return -1;
+    if (eventsA[0].date < eventsB[0].date) {
       return 1;
-    } else if (a > b) {
+    } else if (eventsA[0].date > eventsB[0].date) {
       return -1;
     } else {
       return 0;
@@ -58,7 +60,6 @@ function createProject(_, { input }) {
   const project = new Project({
     id: input.id,
     title: input.title,
-    date: input.date,
     description: input.description,
     tags: input.tags,
     events: sortEvents(input.events),
