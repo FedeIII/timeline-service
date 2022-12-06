@@ -11,6 +11,7 @@ export const projectSchema = new mongoose.Schema({
   events: [{
     id: String,
     imgUrl: String,
+    videoUrl: String,
     title: String,
     description: String,
     date: String,

@@ -24,6 +24,7 @@ export default `#graphql
   type Event {
     id: String
     imgUrl: String
+    videoUrl: String
     title: String
     description: String
     date: String
@@ -59,6 +60,7 @@ export default `#graphql
   input EventInput {
     id: String
     imgUrl: String
+    videoUrl: String
     title: String
     description: String
     date: String
