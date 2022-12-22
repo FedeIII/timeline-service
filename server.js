@@ -1,5 +1,3 @@
-import * as dotenv from "dotenv";
-dotenv.config();
 import express from "express";
 import { ApolloServer } from "@apollo/server";
 import { ApolloServerPluginDrainHttpServer } from "@apollo/server/plugin/drainHttpServer";
