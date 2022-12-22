@@ -1,4 +1,4 @@
-import request from "../../request.js";
+import twitterClient from "./twitterClient.js";
 
 export default async function createProject(responseBody) {
   const project = responseBody.singleResult.data.createProject;
@@ -6,7 +6,7 @@ export default async function createProject(responseBody) {
 
   console.log("tweeting", description);
   try {
-    const response = await request.post("tweets", {
+    const response = await twitterClient.post("tweets", {
       text: description,
     });
     console.log("tweeted!", response);

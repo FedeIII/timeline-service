@@ -1,7 +1,7 @@
 import axios from "axios";
-import { Token } from "./db-connector.js";
+import { Token } from "../../db-connector.js";
 
-const request = axios.create({
+const twitterClient = axios.create({
   baseURL: "https://api.twitter.com/",
   timeout: 1000,
 });
@@ -22,7 +22,7 @@ const request = axios.create({
   if (!tokenValue) {
     console.log("no token found, requesting new one...");
 
-    const response = await request.post(
+    const response = await twitterClient.post(
       "oauth2/token",
       {},
       {
@@ -51,9 +51,9 @@ const request = axios.create({
     console.log("token saved");
   }
 
-  request.defaults.headers.common["Authorization"] = tokenValue;
+  twitterClient.defaults.headers.common["Authorization"] = tokenValue;
 
   console.log("set header Authorization", tokenValue);
 })();
 
-export default request;
+export default twitterClient;

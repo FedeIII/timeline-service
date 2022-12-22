@@ -1,4 +1,4 @@
-import createProject from "./createProject.js";
+// import createProject from "./createProject.js";
 
 export default {
   requestDidStart(requestContext) {
@@ -11,7 +11,8 @@ export default {
       willSendResponse(context) {
         switch (operation) {
           case "CreateProject":
-            createProject(context.response.body);
+            console.log('tweet create project');
+            // createProject(context.response.body);
             break;
 
           default:
