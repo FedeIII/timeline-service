@@ -40,3 +40,8 @@ await new Promise((resolve) => httpServer.listen({ port: PORT }, resolve));
 app.get("/health", (req, res) => {
   res.status(200).send("Healthy");
 });
+
+app.get("/", function (req, res) {
+  res.setHeader("Content-Type", "text/html");
+  res.send("<h1>Hello World</h1>");
+});
