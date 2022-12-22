@@ -8,7 +8,6 @@ import bodyParser from "body-parser";
 
 import typeDefs from "./src/type-defs/projects.js";
 import resolvers from "./src/resolvers/index.js";
-import { PORT } from "./src/app-config.js";
 
 const app = express();
 const httpServer = http.createServer(app);
@@ -33,7 +32,7 @@ app.use(
   })
 );
 
-await new Promise((resolve) => httpServer.listen({ port: PORT }, resolve));
+await new Promise((resolve) => httpServer.listen({ port: process.env.PORT }, resolve));
 
 app.get("/health", (req, res) => {
   res.status(200).send("Healthy");

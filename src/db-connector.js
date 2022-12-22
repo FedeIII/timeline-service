@@ -1,7 +1,6 @@
 import * as dotenv from "dotenv";
 dotenv.config();
 import mongoose from "mongoose";
-import { environment } from "./app-config.js";
 import { projectSchema } from "./schema/projectSchema.js";
 import { tokenSchema } from "./schema/tokenSchema.js";
 
