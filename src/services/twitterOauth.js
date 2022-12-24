@@ -8,7 +8,6 @@ const basicAuthToken = Buffer.from(
 ).toString("base64");
 
 const twitterOauthTokenParams = {
-  client_id: process.env.TWITTER_CLIENT_ID,
   code_verifier: "8KxxO-RPl0bLSxX5AWwgdiFbMnry_VOKzFeIlVA7NoA",
   redirect_uri: process.env.TWITTER_REDIRECT_URI,
   grant_type: "authorization_code",

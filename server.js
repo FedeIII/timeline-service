@@ -20,34 +20,36 @@ const server = new ApolloServer({
   resolvers,
   plugins: [
     ApolloServerPluginDrainHttpServer({ httpServer }),
-    (await import("./src/plugins/twitter/twitter.js")).default,
+    (await import("./src/plugins/twitter/twitterPlugin.js")).default,
   ],
 });
 
 await server.start();
 
-app.use(
-  "/graphql",
-  cors(),
-  bodyParser.json(),
-  expressMiddleware(server, {
-    context: async ({ req }) => ({ token: req.headers.token }),
-  })
-);
+const corsOptions = {
+  origin: [
+    "http://127.0.0.1:3000",
+    "http://localhost:3000",
+    "http://www.localhost:3000",
+    "https://timeline-theta.vercel.app",
+  ],
+  credentials: true,
+};
 
-app.use(
-  cors({
-    origin: [
-      "http://127.0.0.1:3000",
-      "http://localhost:3000",
-      "http://www.localhost:3000",
-      "https://timeline-theta.vercel.app",
-    ],
-    credentials: true,
-  })
-);
+app.use(cors(corsOptions));
 
 app.use(cookieParser());
+
+app.use(
+  "/graphql",
+  cors(corsOptions),
+  bodyParser.json(),
+  expressMiddleware(server, {
+    context: async ({ req }) => {
+      return { oauth2_token: req.cookies.oauth2_token };
+    },
+  })
+);
 
 await new Promise((resolve) =>
   httpServer.listen({ port: process.env.PORT }, resolve)
