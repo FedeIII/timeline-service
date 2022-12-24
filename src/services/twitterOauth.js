@@ -100,6 +100,10 @@ export default async function twitterOauth(req, res) {
 
   const user = await upsertUser(twitterUser);
 
+  if (!user) {
+    return res.redirect(process.env.TWITTER_CALLBACK_URL);
+  }
+
   addCookieToRes(res, user, twitterOAuthToken.access_token);
 
   return res.redirect(process.env.TWITTER_CALLBACK_URL);

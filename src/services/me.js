@@ -20,19 +20,20 @@ async function getTwitterUser(accessToken) {
 export default async function me(req, res) {
   try {
     const token = req.cookies[process.env.OAUTH_COOKIE];
-    if (!token) throw new Error("Not Authenticated");
+    if (!token) throw new Error("No oauth token cookie");
 
     const payload = await jwt.verify(token, process.env.JWT_SECRET);
-    if (!payload.accessToken) throw new Error("Not Authenticated");
+    if (!payload.accessToken)
+      throw new Error("error decoding oauth token cookie");
 
     const userFromDb = await User.findOne({ id: payload?.id });
-    if (!userFromDb) throw new Error("Not Authenticated");
+    if (!userFromDb) throw new Error("Not user in database");
 
     const twUser = await getTwitterUser(payload.accessToken);
-    if (twUser?.id !== userFromDb.id) throw new Error("Not Authenticated");
+    if (twUser?.id !== userFromDb.id) throw new Error("Not twitter user");
 
     res.json(userFromDb);
   } catch (err) {
-    res.status(401).json("Not Authenticated");
+    res.status(401).json({ message: "Not Authenticated", reason: err.message });
   }
 }
