@@ -1,5 +1,3 @@
-// import createProject from "./createProject.js";
-
 export default {
   requestDidStart(requestContext) {
     let operation;
@@ -11,8 +9,8 @@ export default {
       willSendResponse(context) {
         switch (operation) {
           case "CreateProject":
-            console.log('tweet create project');
-            // createProject(context.response.body);
+            console.log("tweet create project");
+            createProject(context.response.body, twit);
             break;
 
           default:
