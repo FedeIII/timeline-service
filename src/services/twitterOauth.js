@@ -57,6 +57,9 @@ function upsertUser(twitterUser) {
         username: twitterUser.username,
         id: twitterUser.id,
         name: twitterUser.name,
+        integrations: {
+          twitter: true,
+        },
       },
     },
     {
