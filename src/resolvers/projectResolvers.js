@@ -1,6 +1,6 @@
-import { v4 as uuid } from 'uuid';
+import { v4 as uuid } from "uuid";
 
-import { Project } from '../db-connector.js'
+import { Project } from "../db-connector.js";
 
 // QUERIES
 
@@ -9,26 +9,28 @@ function getUnsortedProjects() {
     Project.find((err, projects) => {
       if (err) reject(err);
       else resolve(projects);
-    })
+    });
   });
 }
 
 async function getSortedProjects() {
   const projects = await getUnsortedProjects();
 
-  const sortedProjects = projects.sort(({ events: eventsA }, { events: eventsB }) => {
-    if (!eventsA[0]) return 1;
-    if (!eventsB[0]) return -1;
-    if (eventsA[0].date < eventsB[0].date) {
-      return 1;
-    } else if (eventsA[0].date > eventsB[0].date) {
-      return -1;
-    } else {
-      return 0;
+  const sortedProjects = projects.sort(
+    ({ events: eventsA }, { events: eventsB }) => {
+      if (!eventsA[0]) return 1;
+      if (!eventsB[0]) return -1;
+      if (eventsA[0].date < eventsB[0].date) {
+        return 1;
+      } else if (eventsA[0].date > eventsB[0].date) {
+        return -1;
+      } else {
+        return 0;
+      }
     }
-  });
+  );
 
-  return sortedProjects
+  return sortedProjects;
 }
 
 function getProject(_, projectParams) {
@@ -46,17 +48,25 @@ function sortProjectEvents(projectId) {
   return Project.findOneAndUpdate(
     { id: projectId },
     { $push: { events: { $each: [], $sort: { date: 1 } } } },
-    { new: true },
-  )
-}
-
-function sortEvents(events) {
-  return events.sort(
-    (event1, event2) => event1.date > event2.date ? 1 : -1
+    { new: true }
   );
 }
 
+function sortEvents(events) {
+  return events.sort((event1, event2) => (event1.date > event2.date ? 1 : -1));
+}
+
 function createProject(_, { input }) {
+  if (!input.id) throw new Error("Project ID is required");
+  if (!input.title) throw new Error("Project title is required");
+  if (
+    !input.events ||
+    !input.events[0] ||
+    !input.events[0].date ||
+    !input.events[0].title
+  )
+    throw new Error("Project first event is required");
+
   const project = new Project({
     id: input.id,
     title: input.title,
@@ -82,11 +92,10 @@ function editProject(_, { id, input }) {
     };
   }
   return new Promise((resolve, reject) => {
-    Project.findOneAndUpdate({ id }, projectData)
-      .exec((err, project) => {
-        if (err) reject(err);
-        else resolve(project);
-      });
+    Project.findOneAndUpdate({ id }, projectData).exec((err, project) => {
+      if (err) reject(err);
+      else resolve(project);
+    });
   });
 }
 
@@ -97,8 +106,8 @@ async function addEvent(_, { projectId, event }) {
     {
       $push: {
         events: { ...event, id },
-      }
-    },
+      },
+    }
   );
 
   return new Promise((resolve, reject) => {
@@ -110,7 +119,7 @@ async function addEvent(_, { projectId, event }) {
 }
 
 async function deleteProject(_, { id }) {
-  const { deletedCount } = await Project.deleteOne({ id })
+  const { deletedCount } = await Project.deleteOne({ id });
   return deletedCount;
 }
 
@@ -120,15 +129,18 @@ async function editEvent(_, { projectId, eventId, eventProps }) {
       ...acc,
       [`events.$.${propName}`]: propValue,
     }),
-    {},
+    {}
   );
 
-  await Project.findOneAndUpdate({
-    id: projectId,
-    'events.id': eventId
-  }, {
-    $set: updateProps,
-  });
+  await Project.findOneAndUpdate(
+    {
+      id: projectId,
+      "events.id": eventId,
+    },
+    {
+      $set: updateProps,
+    }
+  );
 
   return new Promise((resolve, reject) => {
     sortProjectEvents(projectId).exec((err, project) => {
@@ -143,13 +155,12 @@ async function deleteEvent(_, { projectId, eventId }) {
     Project.findOneAndUpdate(
       { id: projectId },
       { $pull: { events: { id: eventId } } },
-      { new: true },
+      { new: true }
     ).exec((err, project) => {
       if (err) reject(err);
       else resolve(project);
     });
   });
-
 }
 
 export default {
@@ -166,5 +177,5 @@ export default {
     addEvent,
     editEvent,
     deleteEvent,
-  }
-}
+  },
+};

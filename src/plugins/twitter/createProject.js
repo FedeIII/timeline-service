@@ -5,18 +5,22 @@ import format from "date-fns/format/index.js";
 const MAX_CHARACTERS = 280;
 
 function projectIntro(date) {
+  if (!date) return "";
   return `On ${format(new Date(date), "d LLL yyyy")} I started `;
 }
 
 function titleSeparator(title) {
+  if (!title) return "";
+
   if (title.charAt(title.length - 1) === ".") {
     return " ";
-  } else {
-    return ". ";
   }
+
+  return ". ";
 }
 
 function eventIntro(eventTitle) {
+  if (!eventTitle) return "";
   const intro = `First thing I did: ${eventTitle}`;
   return intro + titleSeparator(intro);
 }
@@ -45,13 +49,13 @@ function compileTweets(sentences) {
 }
 
 function getTweets(project) {
-  const { title, description, events = [] } = project;
+  const { title, description, events = [] } = project || {};
   const {
     date,
     description: eventDescription,
     imgUrl,
     title: eventTitle,
-  } = events[0];
+  } = events[0] || {};
 
   const projectText =
     projectIntro(date) + title + titleSeparator(title) + description;
@@ -87,7 +91,7 @@ async function postTweet(tweet, lastTweetId, accessToken) {
         },
       }
     );
-
+    
     return response.data.data.id;
   } catch (error) {
     console.error("error", error.response);
@@ -106,7 +110,13 @@ async function postTweetThread(oauth2_token, project) {
 }
 
 export default async function createProject(responseBody, oauth2_token) {
+  if (!oauth2_token) return;
+
   const project = responseBody.singleResult.data.createProject;
 
-  postTweetThread(oauth2_token, project);
+  try {
+    postTweetThread(oauth2_token, project);
+  } catch (error) {
+    console.error(error.message);
+  }
 }
