@@ -1,4 +1,4 @@
-import createProject from "./createProject.js";
+import onCreateProject from "./onCreateProject.js";
 import addEvent from "./addEvent.js";
 
 export default {
@@ -12,7 +12,7 @@ export default {
       willSendResponse(context) {
         switch (operation) {
           case "CreateProject":
-            createProject(
+            onCreateProject(
               context.response.body,
               requestContext.contextValue.oauth2_token
             );

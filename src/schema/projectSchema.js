@@ -28,4 +28,8 @@ export const projectSchema = new mongoose.Schema({
     },
     topic: String,
   }],
+  twitter: {
+    firstTweetId: String,
+    lastTweetId: String,
+  }
 });

@@ -2,6 +2,8 @@ import axios from "axios";
 import jwt from "jsonwebtoken";
 import format from "date-fns/format/index.js";
 
+import resolvers from "../../resolvers/projectResolvers.js";
+
 const MAX_CHARACTERS = 280;
 
 function projectIntro(date) {
@@ -39,9 +41,13 @@ function compileTweets(sentences) {
         buildingTweet = false;
       } else {
         nextTweet.text += sentences.shift();
+        if (nextTweet.text.charAt(nextTweet.text.length - 1) !== ".") {
+          nextTweet.text += ". ";
+        }
       }
     }
 
+    nextTweet.text.trimEnd();
     tweets.push(nextTweet);
   }
 
@@ -91,7 +97,7 @@ async function postTweet(tweet, lastTweetId, accessToken) {
         },
       }
     );
-    
+
     return response.data.data.id;
   } catch (error) {
     console.error("error", error.response);
@@ -104,18 +110,35 @@ async function postTweetThread(oauth2_token, project) {
   const payload = await jwt.verify(oauth2_token, process.env.JWT_SECRET);
 
   let lastTweetId = null;
+  let firstTeetId = null;
   for (const tweet of tweets) {
     lastTweetId = await postTweet(tweet, lastTweetId, payload.accessToken);
+    if (!firstTeetId) firstTeetId = lastTweetId;
   }
+
+  return [firstTeetId, lastTweetId];
 }
 
-export default async function createProject(responseBody, oauth2_token) {
+export default async function onCreateProject(responseBody, oauth2_token) {
   if (!oauth2_token) return;
 
   const project = responseBody.singleResult.data.createProject;
 
   try {
-    postTweetThread(oauth2_token, project);
+    const [firstTweetId, lastTweetId] = await postTweetThread(
+      oauth2_token,
+      project
+    );
+
+    resolvers.Mutation.editProject(null, {
+      id: project.id,
+      input: {
+        twitter: {
+          firstTweetId,
+          lastTweetId,
+        },
+      },
+    });
   } catch (error) {
     console.error(error.message);
   }
