@@ -4,14 +4,28 @@ import resolvers from "../../resolvers/projectResolvers.js";
 import { postTweet } from "./utils/postTweet.js";
 import { writeTweets } from "./utils/writeTweets.js";
 
-function eventIntro(project) {
-  return `Continuing with ${project.title}: `;
+function titleSeparator(title) {
+  if (!title) return "";
+
+  if (title.charAt(title.length - 1) === ".") {
+    return " ";
+  }
+
+  return ". ";
 }
 
 async function postNewTweets(project, event, accessToken) {
-  const { description, topic, type } = event;
+  const { description, topic, type, id } = event;
+
+  function eventIntro(project) {
+    const event = project.events.find((e) => e.id === id);
+    return `Continuing with ${project.title}: ${event.title}${titleSeparator(
+      event.title
+    )}`;
+  }
+
   const tweets = writeTweets(description, project, eventIntro);
-  
+
   const [firstTweet, ...restTweets] = tweets;
 
   let tweetId;
