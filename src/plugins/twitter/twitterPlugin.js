@@ -1,5 +1,5 @@
 import onCreateProject from "./onCreateProject.js";
-import addEvent from "./addEvent.js";
+import onAddEvent from "./onAddEvent.js";
 
 export default {
   requestDidStart(requestContext) {
@@ -12,17 +12,18 @@ export default {
       willSendResponse(context) {
         switch (operation) {
           case "CreateProject":
-            onCreateProject(
-              context.response.body,
-              requestContext.contextValue.oauth2_token
-            );
+            onCreateProject({
+              project: context.response.body.singleResult.data.createProject,
+              oauth2_token: requestContext.contextValue.oauth2_token,
+            });
             break;
 
           case "AddEvent":
-            // addEvent(
-            //   context.response.body,
-            //   requestContext.contextValue.oauth2_token
-            // );
+            onAddEvent({
+              project: context.response.body.singleResult.data.addEvent,
+              event: requestContext.request.variables.event,
+              oauth2_token: requestContext.contextValue.oauth2_token,
+            });
             break;
 
           default:

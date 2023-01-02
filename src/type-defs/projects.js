@@ -5,6 +5,7 @@ export default `#graphql
     description: String
     tags: [Tag]
     events: [Event]
+    twitter: Twitter
   }
 
   type Tag {
@@ -32,6 +33,11 @@ export default `#graphql
     topic: String
   }
 
+  type Twitter {
+    firstTweetId: String
+    lastTweetId: String
+  }
+
   # QUERIES
 
   type Query {
@@ -50,6 +56,7 @@ export default `#graphql
     description: String
     tags: [TagInput]
     events: [EventInput]
+    twitter: TwitterInput
   }
 
   input TagInput {
@@ -66,6 +73,11 @@ export default `#graphql
     date: String
     type: EventType
     topic: String
+  }
+
+  input TwitterInput {
+    firstTweetId: String
+    lastTweetId: String
   }
 
   type Mutation {
