@@ -11,14 +11,14 @@ function compileTweets(sentences) {
       if ((nextTweet.text + nextSentence).length > 278) {
         buildingTweet = false;
       } else {
-        nextTweet.text += sentences.shift();
+        nextTweet.text += sentences.shift().trimEnd();
         if (nextTweet.text.charAt(nextTweet.text.length - 1) !== ".") {
           nextTweet.text += ". ";
         }
       }
     }
 
-    nextTweet.text.trimEnd();
+    nextTweet.text = nextTweet.text.trimEnd();
     tweets.push(nextTweet);
   }
 

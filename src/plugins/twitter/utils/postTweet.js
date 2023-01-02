@@ -1,20 +1,29 @@
 import axios from "axios";
 
-export async function postTweet(tweet, lastTweetId, accessToken) {
-  const replyTweet = {
+export async function postTweet({
+  tweet,
+  replyTweetId,
+  quoteTweetId,
+  accessToken,
+}) {
+  const tweetPayload = {
     ...tweet,
   };
 
-  if (lastTweetId) {
-    replyTweet.reply = {
-      in_reply_to_tweet_id: lastTweetId,
+  if (replyTweetId) {
+    tweetPayload.reply = {
+      in_reply_to_tweet_id: replyTweetId,
     };
+  }
+
+  if (quoteTweetId) {
+    tweetPayload.quote_tweet_id = quoteTweetId;
   }
 
   try {
     const response = await axios.post(
       "https://api.twitter.com/2/tweets",
-      replyTweet,
+      tweetPayload,
       {
         headers: {
           Authorization: `Bearer ${accessToken}`,

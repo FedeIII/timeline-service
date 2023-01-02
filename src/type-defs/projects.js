@@ -34,8 +34,8 @@ export default `#graphql
   }
 
   type Twitter {
-    firstTweetId: String
-    lastTweetId: String
+    mainThreadId: String
+    subThreadId: String
   }
 
   # QUERIES
@@ -76,8 +76,8 @@ export default `#graphql
   }
 
   input TwitterInput {
-    firstTweetId: String
-    lastTweetId: String
+    mainThreadId: String
+    subThreadId: String
   }
 
   type Mutation {

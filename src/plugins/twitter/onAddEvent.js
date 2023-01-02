@@ -9,16 +9,37 @@ function eventIntro(project) {
 }
 
 async function postNewTweets(project, event, accessToken) {
-  const { description } = event;
+  const { description, topic, type } = event;
   const tweets = writeTweets(description, project, eventIntro);
+  
+  const [firstTweet, ...restTweets] = tweets;
 
-  const firstTweetId = project.twitter.firstTweetId;
-  let lastTweetId = firstTweetId;
-  for (const tweet of tweets) {
-    lastTweetId = await postTweet(tweet, lastTweetId, accessToken);
+  let tweetId;
+  if (topic && type !== "START") {
+    tweetId = await postTweet({
+      tweet: firstTweet,
+      replyTweetId: project.twitter.subThreadId,
+      accessToken,
+    });
+  } else {
+    tweetId = await postTweet({
+      tweet: firstTweet,
+      quoteTweetId: project.twitter.mainThreadId,
+      accessToken,
+    });
   }
 
-  return [firstTweetId, lastTweetId];
+  const firstTweetId = tweetId;
+
+  for (const tweet of restTweets) {
+    tweetId = await postTweet({
+      tweet,
+      replyTweetId: tweetId,
+      accessToken,
+    });
+  }
+
+  return [firstTweetId, tweetId];
 }
 
 export default async function onAddEvent({ project, event, oauth2_token }) {
@@ -27,7 +48,7 @@ export default async function onAddEvent({ project, event, oauth2_token }) {
   try {
     const payload = await jwt.verify(oauth2_token, process.env.JWT_SECRET);
 
-    const [firstTweetId, lastTweetId] = await postNewTweets(
+    const [mainThreadId, subThreadId] = await postNewTweets(
       project,
       event,
       payload.accessToken
@@ -37,8 +58,8 @@ export default async function onAddEvent({ project, event, oauth2_token }) {
       id: project.id,
       input: {
         twitter: {
-          firstTweetId,
-          lastTweetId,
+          mainThreadId,
+          subThreadId,
         },
       },
     });

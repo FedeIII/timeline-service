@@ -43,14 +43,18 @@ async function postTweetThread(accessToken, project) {
     ...writeTweets(eventDescription, project, eventIntro),
   ];
 
-  let firstTweetId = null;
-  let lastTweetId = null;
+  let mainThreadId = null;
+  let subThreadId = null;
   for (const tweet of tweets) {
-    lastTweetId = await postTweet(tweet, lastTweetId, accessToken);
-    if (!firstTweetId) firstTweetId = lastTweetId;
+    subThreadId = await postTweet({
+      tweet,
+      replyTweetId: subThreadId,
+      accessToken,
+    });
+    if (!mainThreadId) mainThreadId = subThreadId;
   }
 
-  return [firstTweetId, lastTweetId];
+  return [mainThreadId, subThreadId];
 }
 
 export default async function onCreateProject({ project, oauth2_token }) {
@@ -59,7 +63,7 @@ export default async function onCreateProject({ project, oauth2_token }) {
   try {
     const payload = await jwt.verify(oauth2_token, process.env.JWT_SECRET);
 
-    const [firstTweetId, lastTweetId] = await postTweetThread(
+    const [mainThreadId, subThreadId] = await postTweetThread(
       payload.accessToken,
       project
     );
@@ -68,8 +72,8 @@ export default async function onCreateProject({ project, oauth2_token }) {
       id: project.id,
       input: {
         twitter: {
-          firstTweetId,
-          lastTweetId,
+          mainThreadId,
+          subThreadId,
         },
       },
     });
