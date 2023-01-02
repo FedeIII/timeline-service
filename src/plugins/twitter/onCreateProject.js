@@ -1,5 +1,7 @@
 import jwt from "jsonwebtoken";
 import format from "date-fns/format/index.js";
+import isToday from "date-fns/isToday/index.js";
+import isFuture from "date-fns/isFuture/index.js";
 
 import resolvers from "../../resolvers/projectResolvers.js";
 import { postTweet } from "./utils/postTweet.js";
@@ -7,6 +9,9 @@ import { writeTweets } from "./utils/writeTweets.js";
 
 function dateIntro(date) {
   if (!date) return "";
+  if (isToday(new Date(date))) return "Today I started ";
+  if (isFuture(new Date(date)))
+    return `On ${format(new Date(date), "d LLL yyyy")}, I'll start `;
   return `On ${format(new Date(date), "d LLL yyyy")}, I started `;
 }
 
