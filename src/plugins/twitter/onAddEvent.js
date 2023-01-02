@@ -15,13 +15,24 @@ function titleSeparator(title) {
 }
 
 async function postNewTweets(project, event, accessToken) {
-  const { description, topic, type, id } = event;
+  const { title, description, topic, type } = event;
 
   function eventIntro(project) {
-    const event = project.events.find((e) => e.id === id);
-    return `Continuing with ${project.title}: ${event.title}${titleSeparator(
-      event.title
-    )}`;
+    let intro = "";
+
+    if (topic && type === "START") {
+      intro = `As part of ${project.title}, I've started ${topic}. First, ${title}.`;
+    } else if (topic && type === "MIDDLE") {
+      intro = title;
+    } else if (topic && type === "END") {
+      intro = `To finish ${topic}, ${title}`;
+    } else if (type === "END_PROJECT") {
+      intro = `And finally, to finish ${project.title}: ${title}`;
+    } else {
+      intro = `Continuing with ${project.title}: ${title}`;
+    }
+
+    return intro + titleSeparator(intro);
   }
 
   const tweets = writeTweets(description, project, eventIntro);
