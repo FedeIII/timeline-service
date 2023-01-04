@@ -35,7 +35,9 @@ async function postNewTweets(project, event, accessToken) {
     return intro + titleSeparator(intro);
   }
 
-  const tweets = writeTweets(description, project, eventIntro);
+  const textIntro = eventIntro(project);
+
+  const tweets = writeTweets(description, textIntro);
 
   const [firstTweet, ...restTweets] = tweets;
 

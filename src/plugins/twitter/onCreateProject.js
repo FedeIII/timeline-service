@@ -1,19 +1,15 @@
 import jwt from "jsonwebtoken";
-import format from "date-fns/format/index.js";
-import isToday from "date-fns/isToday/index.js";
-import isFuture from "date-fns/isFuture/index.js";
+import { Configuration, OpenAIApi } from "openai";
 
 import resolvers from "../../resolvers/projectResolvers.js";
 import { postTweet } from "./utils/postTweet.js";
 import { writeTweets } from "./utils/writeTweets.js";
+import { firstEventPrompt, projectIntroPrompt } from "./utils/aiPrompts.js";
 
-function dateIntro(date) {
-  if (!date) return "";
-  if (isToday(new Date(date))) return "Today I started ";
-  if (isFuture(new Date(date)))
-    return `On ${format(new Date(date), "d LLL yyyy")}, I'll start `;
-  return `On ${format(new Date(date), "d LLL yyyy")}, I started `;
-}
+const configuration = new Configuration({
+  apiKey: process.env.OPENAI_API_KEY,
+});
+const openai = new OpenAIApi(configuration);
 
 function titleSeparator(title) {
   if (!title) return "";
@@ -25,17 +21,33 @@ function titleSeparator(title) {
   return ". ";
 }
 
-function projectIntro(project) {
-  const { title, events = [] } = project;
-  const { date } = events[0] || {};
-  return dateIntro(date) + title + titleSeparator(title);
+async function getProjectIntro(project) {
+  const response = await openai.createCompletion({
+    model: "text-davinci-003",
+    prompt: projectIntroPrompt(project),
+    temperature: 0.9,
+    max_tokens: 50,
+    top_p: 1,
+    frequency_penalty: 0,
+    presence_penalty: 0,
+  });
+
+  const intro = response.data.choices[0].text.replace("\n", "");
+  return intro + titleSeparator(intro);
 }
 
-function eventIntro(project) {
-  const { events = [] } = project;
-  const { title: eventTitle } = events[0] || {};
-  if (!eventTitle) return "";
-  const intro = `First thing I did: ${eventTitle}`;
+async function getEventIntro(project, projectIntro) {
+  const response = await openai.createCompletion({
+    model: "text-davinci-003",
+    prompt: firstEventPrompt(project, projectIntro),
+    temperature: 0.9,
+    max_tokens: 50,
+    top_p: 1,
+    frequency_penalty: 0,
+    presence_penalty: 0,
+  });
+
+  const intro = response.data.choices[0].text.replace("\n", "");
   return intro + titleSeparator(intro);
 }
 
@@ -43,9 +55,12 @@ async function postTweetThread(accessToken, project) {
   const { description, events = [] } = project;
   const { description: eventDescription } = events[0] || {};
 
+  const projectIntro = await getProjectIntro(project);
+  const eventIntro = await getEventIntro(project, projectIntro);
+
   const tweets = [
-    ...writeTweets(description, project, projectIntro),
-    ...writeTweets(eventDescription, project, eventIntro),
+    ...writeTweets(description, projectIntro),
+    ...writeTweets(eventDescription, eventIntro),
   ];
 
   let mainThreadId = null;
