@@ -163,6 +163,19 @@ async function deleteEvent(_, { projectId, eventId }) {
   });
 }
 
+async function deleteTag(_, { projectId, tagLabel }) {
+  return new Promise((resolve, reject) => {
+    Project.findOneAndUpdate(
+      { id: projectId },
+      { $pull: { tags: { label: tagLabel } } },
+      { new: true }
+    ).exec((err, project) => {
+      if (err) reject(err);
+      else resolve(project);
+    });
+  });
+}
+
 export default {
   Query: {
     getAllProjects: getSortedProjects,
@@ -177,5 +190,7 @@ export default {
     addEvent,
     editEvent,
     deleteEvent,
+    // tags
+    deleteTag,
   },
 };
