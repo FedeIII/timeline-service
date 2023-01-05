@@ -1,8 +1,29 @@
 import jwt from "jsonwebtoken";
+import { Configuration, OpenAIApi } from "openai";
 
 import resolvers from "../../resolvers/projectResolvers.js";
 import { postTweet } from "./utils/postTweet.js";
 import { writeTweets } from "./utils/writeTweets.js";
+
+const configuration = new Configuration({
+  apiKey: process.env.OPENAI_API_KEY,
+});
+const openai = new OpenAIApi(configuration);
+
+async function getEventIntro(project, event) {
+  const response = await openai.createCompletion({
+    model: "text-davinci-003",
+    prompt: eventIntroPrompt(project, event),
+    temperature: 0.9,
+    max_tokens: 50,
+    top_p: 1,
+    frequency_penalty: 0,
+    presence_penalty: 0,
+  });
+
+  const intro = response.data.choices[0].text.replace("\n", "");
+  return intro + titleSeparator(intro);
+}
 
 function titleSeparator(title) {
   if (!title) return "";
@@ -17,25 +38,7 @@ function titleSeparator(title) {
 async function postNewTweets(project, event, accessToken) {
   const { title, description, topic, type } = event;
 
-  function eventIntro(project) {
-    let intro = "";
-
-    if (topic && type === "START") {
-      intro = `As part of ${project.title}, I've started ${topic}. First, ${title}.`;
-    } else if (topic && type === "MIDDLE") {
-      intro = title;
-    } else if (topic && type === "END") {
-      intro = `To finish ${topic}, ${title}`;
-    } else if (type === "END_PROJECT") {
-      intro = `And finally, to finish ${project.title}: ${title}`;
-    } else {
-      intro = `Continuing with ${project.title}: ${title}`;
-    }
-
-    return intro + titleSeparator(intro);
-  }
-
-  const textIntro = eventIntro(project);
+  const textIntro = await getEventIntro(project, event);
 
   const tweets = writeTweets(description, textIntro);
 
