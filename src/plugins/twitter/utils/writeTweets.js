@@ -26,7 +26,8 @@ function compileTweets(sentences) {
 }
 
 export function writeTweets(text, textIntro) {
-  const textWithIntro = textIntro + text;
+  let textWithIntro = textIntro;
+  if (text) textWithIntro += text;
   const sentences = textWithIntro.split(". ");
 
   return compileTweets(sentences);
