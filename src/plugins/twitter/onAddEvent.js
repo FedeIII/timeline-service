@@ -2,6 +2,7 @@ import jwt from "jsonwebtoken";
 import { Configuration, OpenAIApi } from "openai";
 
 import resolvers from "../../resolvers/projectResolvers.js";
+import { eventIntroPrompt } from "./utils/aiPrompts.js";
 import { postTweet } from "./utils/postTweet.js";
 import { titleSeparator } from "./utils/titleSeparator.js";
 import { writeTweets } from "./utils/writeTweets.js";
@@ -22,16 +23,16 @@ async function getEventIntro(project, event) {
     presence_penalty: 0,
   });
 
-  const intro = response.data.choices[0].text.replace("\n", "");
+  const intro = response.data.choices[0].text.replaceAll("\n", "");
   return intro + titleSeparator(intro);
 }
 
 async function postNewTweets(project, event, accessToken) {
-  const { title, description, topic, type } = event;
+  const { description, topic, type, videoUrl } = event;
 
   const textIntro = await getEventIntro(project, event);
 
-  const tweets = writeTweets(description, textIntro);
+  const tweets = writeTweets(description, textIntro, videoUrl);
 
   const [firstTweet, ...restTweets] = tweets;
 

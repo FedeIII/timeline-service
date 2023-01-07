@@ -23,7 +23,7 @@ async function getProjectIntro(project) {
     presence_penalty: 0,
   });
 
-  const intro = response.data.choices[0].text.replace("\n", "");
+  const intro = response.data.choices[0].text.replaceAll("\n", "");
   return intro + titleSeparator(intro);
 }
 
@@ -38,20 +38,20 @@ async function getEventIntro(project, projectIntro) {
     presence_penalty: 0,
   });
 
-  const intro = response.data.choices[0].text.replace("\n", "");
+  const intro = response.data.choices[0].text.replaceAll("\n", "");
   return intro + titleSeparator(intro);
 }
 
 async function postTweetThread(accessToken, project) {
   const { description, events = [] } = project;
-  const { description: eventDescription } = events[0] || {};
+  const { description: eventDescription, videoUrl } = events[0] || {};
 
   const projectIntro = await getProjectIntro(project);
   const eventIntro = await getEventIntro(project, projectIntro);
 
   const tweets = [
     ...writeTweets(description, projectIntro),
-    ...writeTweets(eventDescription, eventIntro),
+    ...writeTweets(eventDescription, eventIntro, videoUrl),
   ];
 
   let mainThreadId = null;
