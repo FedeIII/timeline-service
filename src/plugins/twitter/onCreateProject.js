@@ -5,7 +5,7 @@ import resolvers from "../../resolvers/projectResolvers.js";
 import { postTweet } from "./utils/postTweet.js";
 import { writeTweets } from "./utils/writeTweets.js";
 import { firstEventPrompt, projectIntroPrompt } from "./utils/aiPrompts.js";
-import { titleSeparator } from "./utils/titleSeparator";
+import { titleSeparator } from "./utils/titleSeparator.js";
 
 const configuration = new Configuration({
   apiKey: process.env.OPENAI_API_KEY,
