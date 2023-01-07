@@ -5,21 +5,12 @@ import resolvers from "../../resolvers/projectResolvers.js";
 import { postTweet } from "./utils/postTweet.js";
 import { writeTweets } from "./utils/writeTweets.js";
 import { firstEventPrompt, projectIntroPrompt } from "./utils/aiPrompts.js";
+import { titleSeparator } from "./utils/titleSeparator";
 
 const configuration = new Configuration({
   apiKey: process.env.OPENAI_API_KEY,
 });
 const openai = new OpenAIApi(configuration);
-
-function titleSeparator(title) {
-  if (!title) return "";
-
-  if (title.charAt(title.length - 1) === ".") {
-    return " ";
-  }
-
-  return ". ";
-}
 
 async function getProjectIntro(project) {
   const response = await openai.createCompletion({

@@ -3,6 +3,7 @@ import { Configuration, OpenAIApi } from "openai";
 
 import resolvers from "../../resolvers/projectResolvers.js";
 import { postTweet } from "./utils/postTweet.js";
+import { titleSeparator } from "./utils/titleSeparator.js";
 import { writeTweets } from "./utils/writeTweets.js";
 
 const configuration = new Configuration({
@@ -23,16 +24,6 @@ async function getEventIntro(project, event) {
 
   const intro = response.data.choices[0].text.replace("\n", "");
   return intro + titleSeparator(intro);
-}
-
-function titleSeparator(title) {
-  if (!title) return "";
-
-  if (title.charAt(title.length - 1) === ".") {
-    return " ";
-  }
-
-  return ". ";
 }
 
 async function postNewTweets(project, event, accessToken) {
