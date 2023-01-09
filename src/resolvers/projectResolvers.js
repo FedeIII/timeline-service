@@ -92,10 +92,12 @@ function editProject(_, { id, input }) {
     };
   }
   return new Promise((resolve, reject) => {
-    Project.findOneAndUpdate({ id }, projectData).exec((err, project) => {
-      if (err) reject(err);
-      else resolve(project);
-    });
+    Project.findOneAndUpdate({ id }, { $set: projectData }, { new: true }).exec(
+      (err, project) => {
+        if (err) reject(err);
+        else resolve(project);
+      }
+    );
   });
 }
 
