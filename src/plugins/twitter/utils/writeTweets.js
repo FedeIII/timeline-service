@@ -15,18 +15,26 @@ function getVideoUrl(videoUrl) {
   );
 }
 
-function compileTweets(sentences, videoUrl) {
+function getImageUrl(imgUrl) {
+  return imgUrl;
+}
+
+function compileTweets(sentences, videoUrl, imgUrl) {
   const tweets = [];
 
-  let videoAdded = false;
+  let mediaAdded = false;
   let tweetIndex = 0;
   while (sentences.length) {
     const nextTweet = { text: "" };
     let buildingTweet = true;
 
-    if (videoUrl && !videoAdded && isSecondTweet(tweetIndex)) {
-      nextTweet.text += getVideoUrl(videoUrl) + " \n\n";
-      videoAdded = true;
+    if (!mediaAdded && isSecondTweet(tweetIndex)) {
+      if (videoUrl) {
+        nextTweet.text += getVideoUrl(videoUrl) + " \n\n";
+      } else if (imgUrl) {
+        nextTweet.text += getImageUrl(imgUrl) + " \n\n";
+      }
+      mediaAdded = true;
     }
 
     while (buildingTweet && sentences.length) {
@@ -41,11 +49,11 @@ function compileTweets(sentences, videoUrl) {
         }
       }
 
-      if (videoUrl && isFirstTweet(tweetIndex)) {
-        const url = getVideoUrl(videoUrl);
+      if (isFirstTweet(tweetIndex)) {
+        const url = videoUrl ? getVideoUrl(videoUrl) : getImageUrl(imgUrl);
         if ((nextTweet.text + url).length <= MAX_CHARACTERS) {
           nextTweet.text += url;
-          videoAdded = true;
+          mediaAdded = true;
         }
       }
     }
@@ -59,10 +67,10 @@ function compileTweets(sentences, videoUrl) {
   return tweets;
 }
 
-export function writeTweets(text, textIntro, videoUrl) {
+export function writeTweets(text, textIntro, videoUrl, imgUrl) {
   let textWithIntro = textIntro;
   if (text) textWithIntro += text;
   const sentences = textWithIntro.split(". ");
 
-  return compileTweets(sentences, videoUrl);
+  return compileTweets(sentences, videoUrl, imgUrl);
 }

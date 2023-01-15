@@ -44,14 +44,14 @@ async function getEventIntro(project, projectIntro) {
 
 async function postTweetThread(accessToken, project) {
   const { description, events = [] } = project;
-  const { description: eventDescription, videoUrl } = events[0] || {};
+  const { description: eventDescription, videoUrl, imgUrl } = events[0] || {};
 
   const projectIntro = await getProjectIntro(project);
   const eventIntro = await getEventIntro(project, projectIntro);
 
   const tweets = [
     ...writeTweets(description, projectIntro),
-    ...writeTweets(eventDescription, eventIntro, videoUrl),
+    ...writeTweets(eventDescription, eventIntro, videoUrl, imgUrl),
   ];
 
   let mainThreadId = null;

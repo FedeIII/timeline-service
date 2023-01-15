@@ -28,11 +28,11 @@ async function getEventIntro(project, event) {
 }
 
 async function postNewTweets(project, event, accessToken) {
-  const { description, topic, type, videoUrl } = event;
+  const { description, topic, type, videoUrl, imgUrl } = event;
 
   const textIntro = await getEventIntro(project, event);
 
-  const tweets = writeTweets(description, textIntro, videoUrl);
+  const tweets = writeTweets(description, textIntro, videoUrl, imgUrl);
 
   const [firstTweet, ...restTweets] = tweets;
 
