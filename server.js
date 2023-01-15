@@ -66,6 +66,7 @@ app.get("/handshake", function (req, res) {
       TWITTER_REDIRECT_URI: process.env.TWITTER_REDIRECT_URI,
       TWITTER_CLIENT_ID: process.env.TWITTER_CLIENT_ID,
       ME_URL: process.env.ME_URL,
+      OAUTH_COOKIE: process.env.OAUTH_COOKIE,
     })
   );
 });

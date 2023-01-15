@@ -4,17 +4,17 @@ import { Project } from "../db-connector.js";
 
 // QUERIES
 
-function getUnsortedProjects() {
+function getUnsortedProjects(userId) {
   return new Promise((resolve, reject) => {
-    Project.find((err, projects) => {
+    Project.find({ userId }).exec((err, projects) => {
       if (err) reject(err);
       else resolve(projects);
     });
   });
 }
 
-async function getSortedProjects() {
-  const projects = await getUnsortedProjects();
+async function getSortedProjects(_, projectParams) {
+  const projects = await getUnsortedProjects(projectParams.userId);
 
   const sortedProjects = projects.sort(
     ({ events: eventsA }, { events: eventsB }) => {
@@ -58,6 +58,7 @@ function sortEvents(events) {
 
 function createProject(_, { input }) {
   if (!input.id) throw new Error("Project ID is required");
+  if (!input.userId) throw new Error("Project user ID is required");
   if (!input.title) throw new Error("Project title is required");
   if (
     !input.events ||
@@ -69,6 +70,7 @@ function createProject(_, { input }) {
 
   const project = new Project({
     id: input.id,
+    userId: input.userId,
     title: input.title,
     description: input.description,
     tags: input.tags,

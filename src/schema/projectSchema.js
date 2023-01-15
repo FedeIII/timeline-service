@@ -2,6 +2,7 @@ import mongoose from 'mongoose';
 
 export const projectSchema = new mongoose.Schema({
   id: String,
+  userId: String,
   title: String,
   description: String,
   tags: [{

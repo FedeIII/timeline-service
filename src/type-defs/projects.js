@@ -1,6 +1,7 @@
 export default `#graphql
   type Project {
     id: String
+    userId: String
     title: String
     description: String
     tags: [Tag]
@@ -41,7 +42,9 @@ export default `#graphql
   # QUERIES
 
   type Query {
-    getAllProjects: [Project]
+    getAllProjects(
+      userId: String
+    ): [Project]
     getProject(
       id: String
       title: String
@@ -52,6 +55,7 @@ export default `#graphql
 
   input ProjectInput {
     id: String
+    userId: String
     title: String
     description: String
     tags: [TagInput]
