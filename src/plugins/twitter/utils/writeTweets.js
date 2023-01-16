@@ -51,9 +51,11 @@ function compileTweets(sentences, videoUrl, imgUrl) {
 
       if (isFirstTweet(tweetIndex)) {
         const url = videoUrl ? getVideoUrl(videoUrl) : getImageUrl(imgUrl);
-        if ((nextTweet.text + url).length <= MAX_CHARACTERS) {
-          nextTweet.text += url;
-          mediaAdded = true;
+        if (url) {
+          if ((nextTweet.text + url).length <= MAX_CHARACTERS) {
+            nextTweet.text += url;
+            mediaAdded = true;
+          }
         }
       }
     }

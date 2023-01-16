@@ -188,10 +188,12 @@ export default {
 
   Mutation: {
     createProject,
+    createProjectPublic: createProject,
     editProject,
     deleteProject,
     // events
     addEvent,
+    addEventPublic: addEvent,
     editEvent,
     deleteEvent,
     // tags

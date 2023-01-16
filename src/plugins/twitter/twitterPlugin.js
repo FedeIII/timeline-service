@@ -11,16 +11,16 @@ export default {
       },
       willSendResponse(context) {
         switch (operation) {
-          case "CreateProject":
+          case "CreateProjectPublic":
             onCreateProject({
-              project: context.response.body.singleResult.data.createProject,
+              project: context.response.body.singleResult.data.createProjectPublic,
               oauth2_token: requestContext.contextValue.oauth2_token,
             });
             break;
 
-          case "AddEvent":
+          case "AddEventPublic":
             onAddEvent({
-              project: context.response.body.singleResult.data.addEvent,
+              project: context.response.body.singleResult.data.addEventPublic,
               event: requestContext.request.variables.event,
               oauth2_token: requestContext.contextValue.oauth2_token,
             });

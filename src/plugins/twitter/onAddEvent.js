@@ -86,6 +86,6 @@ export default async function onAddEvent({ project, event, oauth2_token }) {
       },
     });
   } catch (error) {
-    console.error(error.message);
+    console.error(error);
   }
 }
