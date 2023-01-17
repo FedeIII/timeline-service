@@ -79,7 +79,7 @@ function addCookieToRes(res, user, accessToken) {
   );
 
   res.cookie(process.env.OAUTH_COOKIE, token, {
-    httpOnly: true,
+    httpOnly: false,
     secure: true,
     sameSite: "none",
     expires: new Date(Date.now() + 7200 * 1000),
