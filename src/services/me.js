@@ -33,6 +33,8 @@ async function getUser(token) {
 
 export async function me(req, res) {
   let token = req.query.token;
+  console.log('query:', req.query);
+  console.log('cookies:', req.cookies);
 
   try {
     if (!token) token = req.cookies[process.env.OAUTH_COOKIE];
