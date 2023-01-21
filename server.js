@@ -9,8 +9,8 @@ import cookieParser from "cookie-parser";
 
 import typeDefs from "./src/type-defs/projects.js";
 import resolvers from "./src/resolvers/index.js";
-import twitterOauth from "./src/services/twitterOauth.js";
-import me from "./src/services/me.js";
+import { me } from "./src/services/me.js";
+import { upsertUser } from "./src/services/user.js";
 
 const app = express();
 const httpServer = http.createServer(app);
@@ -37,8 +37,8 @@ const corsOptions = {
 };
 
 app.use(cors(corsOptions));
-
 app.use(cookieParser());
+app.use(express.json());
 
 app.use(
   "/graphql",
@@ -76,6 +76,6 @@ app.get("/", function (req, res) {
   res.send("<h1>Hello World</h1>");
 });
 
-app.get("/oauth/twitter", twitterOauth);
-
 app.get("/me", me);
+
+app.post("/user/:userId/upsert", upsertUser);

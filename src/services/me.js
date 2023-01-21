@@ -31,7 +31,7 @@ async function getUser(token) {
   return userFromDb;
 }
 
-export default async function me(req, res) {
+export async function me(req, res) {
   let token = req.query.token;
 
   try {
