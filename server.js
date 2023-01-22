@@ -46,6 +46,7 @@ app.use(
   bodyParser.json(),
   expressMiddleware(server, {
     context: async ({ req }) => {
+      console.log('req.cookies', req.cookies);
       return { oauth2_token: req.cookies.oauth2_token };
     },
   })
