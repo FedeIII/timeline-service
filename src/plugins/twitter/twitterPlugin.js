@@ -12,6 +12,7 @@ export default {
       willSendResponse(context) {
         switch (operation) {
           case "CreateProjectPublic":
+            console.log('requestContext.contextValue', requestContext.contextValue);
             onCreateProject({
               project: context.response.body.singleResult.data.createProjectPublic,
               oauth2_token: requestContext.contextValue.oauth2_token,
