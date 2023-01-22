@@ -47,7 +47,10 @@ app.use(
   expressMiddleware(server, {
     context: async ({ req }) => {
       console.log('req.cookies', req.cookies);
-      return { oauth2_token: req.cookies.oauth2_token };
+      console.log('req.headers', req.headers);
+      return {
+        oauth2_token: req.cookies.oauth2_token || req.headers.oauth2_token,
+      };
     },
   })
 );
