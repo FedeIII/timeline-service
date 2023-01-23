@@ -49,7 +49,7 @@ function compileTweets(sentences, videoUrl, imgUrl) {
         }
       }
 
-      if (isFirstTweet(tweetIndex)) {
+      if (!mediaAdded && isFirstTweet(tweetIndex) && sentences.length === 0) {
         const url = videoUrl ? getVideoUrl(videoUrl) : getImageUrl(imgUrl);
         if (url) {
           if ((nextTweet.text + url).length <= MAX_CHARACTERS) {
