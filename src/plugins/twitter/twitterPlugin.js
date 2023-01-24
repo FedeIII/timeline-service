@@ -13,7 +13,8 @@ export default {
         switch (operation) {
           case "CreateProjectPublic":
             onCreateProject({
-              project: context.response.body.singleResult.data.createProjectPublic,
+              project:
+                context.response.body.singleResult.data.createProjectPublic,
               oauth2_token: requestContext.contextValue.oauth2_token,
             });
             break;
